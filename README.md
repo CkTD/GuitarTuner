@@ -13,6 +13,11 @@
 
 To build and run, need `gstreamer-1.0` and `PulseAudio`
 
-'''
+```
 gcc gt.c -o gt `pkg-config --cflags --libs gstreamer-1.0 ` -lm -g
-'''
+```
+
+## To do
+
+- GUI
+- support different tunings(Standard, Drop D, ...), rather than only auto.
