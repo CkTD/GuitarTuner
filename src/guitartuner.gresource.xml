@@ -7,6 +7,9 @@
     <file>guitartuner-stack.ui</file>
   </gresource>
   <gresource prefix="/com/github/CkTD/guitartuner">
+    <file>guitartuner-prefs.ui</file>
+  </gresource>
+  <gresource prefix="/com/github/CkTD/guitartuner">
     <file>style.css</file>
   </gresource>
 </gresources>

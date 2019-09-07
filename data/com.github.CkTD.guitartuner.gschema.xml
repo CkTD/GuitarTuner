@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist gettext-domain="guitartuner">
 	<schema id="com.github.CkTD.guitartuner" path="/com/github/CkTD/guitartuner/">
+	  <key type="d" name="sensitivity">
+			<default>0.75</default>
+			<summary>sensitivity!</summary>
+		</key>
+	  <key type="d" name="accuracy">
+			<default>0.2</default>
+			<summary>accuracy!</summary>
+		</key>
 	</schema>
 </schemalist>

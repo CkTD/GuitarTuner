@@ -4,6 +4,7 @@ guitartuner_sources = [
   'guitartuner-app.c',
   'guitartuner-freq.c',
   'guitartuner-note.c',
+  'guitartuner-prefs.c',
 ]
 
 

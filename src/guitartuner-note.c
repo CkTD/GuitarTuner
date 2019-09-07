@@ -42,7 +42,7 @@ void standard_notes_init()
   }
 
   // --------------- 
-  
+  /*
   g_print ("Standard frequency table");
   for (i = 0;i < NO_OCTAVE * NO_NOTES_PER_OCTAVE; i ++) {
     if (i && (i % NO_NOTES_PER_OCTAVE == 0))
@@ -50,7 +50,7 @@ void standard_notes_init()
     g_print ("%f\t", standard_notes[i]);
   }
   g_print ("\n");
-  
+  */
   // ----------------
 }
 

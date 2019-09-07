@@ -104,7 +104,7 @@ static void pipeline_error_cb (GstBus *bus, GstMessage *msg, GuitartunerFreq *se
   and return fundamental frequency
 */
 static void hps(const GValue *magnitudes, GuitartunerFreq *self, gdouble *res_freq, gdouble *res_mag_percent) {
-  g_print("HPS, %d\n", self->rate);
+  //g_print("HPS, %d\n", self->rate);
   const GValue *mag;
   gint i;
   gdouble freq;
@@ -142,7 +142,7 @@ static void hps(const GValue *magnitudes, GuitartunerFreq *self, gdouble *res_fr
   }
   
   freq = (gdouble)self->rate / 2 / self->spect_bands * (min_index + 0.5);
-  g_print("%d, %f, %f\n", min_index, min_value, freq);
+  //g_print("%d, %f, %f\n", min_index, min_value, freq);
   g_free(original_mag);
   g_free(compress2_mag);
   g_free(compress3_mag);
@@ -176,7 +176,7 @@ static void handle_spectrum(const GstStructure *s, GuitartunerFreq *self)
 
   g_signal_emit (self, guitartuner_freq_signals[FREQ_EVENT], 0, freq, mag_percent);
 
-  g_print("Freq: %f\n", freq);
+  //g_print("Freq: %f\n", freq);
 }
 
 static void pipeline_element_cb(GstBus *bus, GstMessage *msg, GuitartunerFreq *self) {
@@ -268,7 +268,6 @@ static void guitartuner_freq_init(GuitartunerFreq *self)
   /* Start playing the pipeline */
 
   gst_element_set_state (self->pipeline, GST_STATE_PLAYING);
-  g_print("INIT before return! bands: %d\n", self->spect_bands);
   return ;
 }
 

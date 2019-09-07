@@ -20,12 +20,18 @@
 #include "guitartuner-window.h"
 #include "guitartuner-app.h"
 #include "guitartuner-note.h"
+#include "guitartuner-prefs.h"
+
+#include <glib-object.h>
 
 struct _GuitartunerWindow
 {
   GtkApplicationWindow  parent_instance;
 
+  GSettings           *settings;
+
   GtkWidget           *header_bar;
+  GtkWidget           *prefs_button;
   GtkWidget           *stack;
   //GtkWidget           *auto_box;
   GtkWidget           *auto_message_head;
@@ -42,22 +48,63 @@ struct _GuitartunerWindow
 
   GtkWidget           *current_note;
   gdouble              sensitivity;
-  gdouble              accurate;
+  gdouble              accuracy;
 
 };
 
 G_DEFINE_TYPE (GuitartunerWindow, guitartuner_window, GTK_TYPE_APPLICATION_WINDOW)
 
-static void
-guitartuner_window_class_init (GuitartunerWindowClass *klass)
-{
-  GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
+enum {
+  PROP_SENSITIVITY = 1,
+  PROP_ACCURACY,
+  N_PROPERTIES
+};
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/com/github/CkTD/guitartuner/guitartuner-window.ui");
-  gtk_widget_class_bind_template_child (widget_class, GuitartunerWindow, header_bar);
-  gtk_widget_class_bind_template_child (widget_class, GuitartunerWindow, stack);
+static GParamSpec *obj_properties[N_PROPERTIES] = {NULL, };
+static void
+guitartuner_window_set_property (GObject       *obj,
+                                 guint          property_id,
+                                 const GValue  *value,
+                                 GParamSpec    *pspec)
+{
+  GuitartunerWindow *self = GUITARTUNER_WINDOW(obj);
+
+  switch (property_id){
+    case PROP_SENSITIVITY:
+      self->sensitivity = g_value_get_double (value);
+      break;
+    case PROP_ACCURACY:
+      self->accuracy = g_value_get_double (value);
+      break;
+  }
 }
 
+static void
+guitartuner_window_get_property (GObject    *object,
+                          guint       property_id,
+                          GValue     *value,
+                          GParamSpec *pspec)
+{
+  GuitartunerWindow *self = GUITARTUNER_WINDOW (object);
+
+  switch (property_id)
+    {
+    case PROP_SENSITIVITY:
+      g_value_set_double (value, self->sensitivity);
+      break;
+
+    case PROP_ACCURACY:
+      g_value_set_double (value, self->accuracy);
+      break;
+    }
+}
+
+static void
+guitartuner_window_dispose(GObject *obj)
+{
+  g_clear_object(&GUITARTUNER_WINDOW(obj)->settings);
+  G_OBJECT_CLASS (guitartuner_window_parent_class)->dispose(obj);
+}
 
 static void set_css(void)
 {
@@ -72,6 +119,42 @@ static void set_css(void)
 
   gtk_css_provider_load_from_resource (provider, "/com/github/CkTD/guitartuner/style.css");
   g_object_unref (provider);
+}
+
+static void
+guitartuner_window_class_init (GuitartunerWindowClass *klass)
+{
+  GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
+  GObjectClass   *object_class = G_OBJECT_CLASS (klass);
+
+  standard_notes_init ();
+  set_css ();
+
+  gtk_widget_class_set_template_from_resource (widget_class, "/com/github/CkTD/guitartuner/guitartuner-window.ui");
+  gtk_widget_class_bind_template_child (widget_class, GuitartunerWindow, header_bar);
+  gtk_widget_class_bind_template_child (widget_class, GuitartunerWindow, prefs_button);
+  gtk_widget_class_bind_template_child (widget_class, GuitartunerWindow, stack);
+
+  object_class->set_property = guitartuner_window_set_property;
+  object_class->get_property = guitartuner_window_get_property;
+  object_class->dispose = guitartuner_window_dispose;
+  obj_properties[PROP_SENSITIVITY] =
+    g_param_spec_double ("sensitivity",
+                         "sensitivity",
+                         "The sensitivity",
+                         0,
+                         1,
+                         0.75,
+                         G_PARAM_READWRITE);
+  obj_properties[PROP_ACCURACY] =
+    g_param_spec_double ("accuracy",
+                         "accuracy",
+                         "The accuracy",
+                         0,
+                         1,
+                         0.1,
+                         G_PARAM_READWRITE);
+  g_object_class_install_properties(object_class, N_PROPERTIES, obj_properties);
 }
 
 
@@ -90,22 +173,36 @@ note_grid_set_text(gint octave, gint note, GtkWidget *label_note, GtkWidget *lab
   gtk_label_set_text (GTK_LABEL(label_octave), buffer_note_octave);
 }
 
+static void
+pref_button_clicked   (GtkButton *button,
+                       gpointer  *user_data)
+{
+  GuitartunerPrefs *prefs;
+  //GtkWindow *win;
+
+  //win = gtk_application_get_active_window (GTK_APPLICATION (app));
+  prefs = guitartuner_prefs_new (GUITARTUNER_WINDOW(user_data));
+  gtk_window_present (GTK_WINDOW (prefs));
+}
 
 static void
 guitartuner_window_init (GuitartunerWindow *self)
 {
-  gtk_widget_init_template (GTK_WIDGET (self));
-  standard_notes_init ();
-  set_css ();
+
+  self->settings = g_settings_new ("com.github.CkTD.guitartuner");
+  g_settings_bind (self->settings, "sensitivity", self, "sensitivity", G_SETTINGS_BIND_DEFAULT);
+  g_settings_bind (self->settings, "accuracy", self, "accuracy", G_SETTINGS_BIND_DEFAULT);
   
   GtkBuilder *builder;
   GtkWidget *note_name , *note_sharp, *note_octave;
   int i, j;
   
-  self->sensitivity = 0.5;
-  self->accurate = 0.1;
+  //self->sensitivity = 0.5;
+  //self->accuracy = 0.1;
   self->current_note = NULL;
   
+  gtk_widget_init_template (GTK_WIDGET (self));
+  g_signal_connect (self->prefs_button, "clicked", G_CALLBACK (pref_button_clicked), self);
   builder = gtk_builder_new_from_resource ("/com/github/CkTD/guitartuner/guitartuner-stack.ui");
   self->auto_message_head = GTK_WIDGET(gtk_builder_get_object (builder, "auto_message_head"));
   self->auto_grid = GTK_WIDGET(gtk_builder_get_object (builder, "auto_grid"));
@@ -167,8 +264,9 @@ void guitartuner_window_freq_change(GuitartunerWindow *self, gdouble freq, gdoub
     "Too flat, tune up!",
     "You are in tune!"
   };
+  //g_print("Accu: %f, sensi: %f\n", self->sensitivity, self->accuracy);
   
-  if(mag_percent < self->sensitivity) {
+  if(mag_percent < 1 - self->sensitivity) {
     if (self->current_note) {
       gtk_widget_set_name (self->current_note, "note_grid");
       gtk_container_remove (GTK_CONTAINER(self->auto_message_head), self->auto_message_head_box);
@@ -189,10 +287,10 @@ void guitartuner_window_freq_change(GuitartunerWindow *self, gdouble freq, gdoub
     }
     gtk_widget_set_name (self->auto_notes[octave][note], "note_grid_current"); 
     self->current_note = self->auto_notes[octave][note];
-    if (bias > self->accurate) {
+    if (bias > self->accuracy) {
       suggestion = suggestions[0];
     }
-    else if (bias < -1 * self->accurate) {
+    else if (bias < -1 * self->accuracy) {
       suggestion = suggestions[1];
     }
     else {

@@ -35,7 +35,7 @@ G_DEFINE_TYPE (GuitartunerApp, guitartuner_app, GTK_TYPE_APPLICATION)
 
 static void guitartuner_app_handle_freq(GuitartunerFreq *obj, gdouble freq, gdouble mag_percent, GuitartunerApp *self)
 {
-  g_print("MSG FROM APP: freq: %f\n", freq);
+  //g_print("MSG FROM APP: freq: %f\n", freq);
   guitartuner_window_freq_change (self->window, freq, mag_percent);
 }
 
