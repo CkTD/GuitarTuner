@@ -287,11 +287,11 @@ void guitartuner_window_freq_change(GuitartunerWindow *self, gdouble freq, gdoub
     }
     gtk_widget_set_name (self->auto_notes[octave][note], "note_grid_current"); 
     self->current_note = self->auto_notes[octave][note];
-    if (bias > self->accuracy) {
-      suggestion = suggestions[0];
-    }
-    else if (bias < -1 * self->accuracy) {
+    if (bias <= 0 &&  bias <  (1 - self->accuracy) * -1) {
       suggestion = suggestions[1];
+    }
+    else if (bias > 0 && bias > (1 - self->accuracy)) {
+      suggestion = suggestions[0];
     }
     else {
       suggestion = suggestions[2];
