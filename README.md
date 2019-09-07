@@ -1,5 +1,7 @@
 # GuitarTuner
 
+![screenshot](doc/screenshot.png)
+
 ## What it does
 
 - get audio from mic
@@ -9,15 +11,6 @@
 - compare the obtained frequency whih standard frequency of note(C0 - B4)
 - find the nearest standard note, get how flat or sharp obtained note from it
 
-## Build and run
-
-To build and run, need `gstreamer-1.0` and `PulseAudio`
-
-```
-gcc gt.c -o gt `pkg-config --cflags --libs gstreamer-1.0 ` -lm -g
-```
-
-## To do
-
-- GUI
-- support different tunings(Standard, Drop D, ...), rather than only auto.
+## Dependencies
+- gtk+-3.0
+- gstreamer-1.0
