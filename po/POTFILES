@@ -1,0 +1,7 @@
+data/com.github.CkTD.guitartuner.desktop.in
+data/com.github.CkTD.guitartuner.appdata.xml.in
+data/com.github.CkTD.guitartuner.gschema.xml
+src/guitartuner-window.ui
+src/main.c
+src/guitartuner-window.c
+

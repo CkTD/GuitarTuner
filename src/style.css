@@ -1,0 +1,72 @@
+GtkWindow {
+    background-color: magenta;
+}
+
+GtkButton {
+    background-image: none;
+}
+
+
+#note_grid {
+  margin: 3px;
+  padding: 5px;
+  border-radius: 3px;
+  background-color: @base_color;
+}
+
+#message_nothing {
+  font-weight: bold;
+  font-size: 30px;
+  background-color: @tooltip_bg_color;
+}
+
+
+#note_grid_current{
+  margin: 3px;
+  padding: 5px;
+  border-radius: 3px;
+  background-color: @selected_bg_color;
+}
+
+#note_name {
+  font-weight: bold;
+  font-size:  20px;
+}
+
+#note_script {
+  font-weight: normal;
+  font-size: 15px;
+}
+
+#message_note_name {
+  font-weight: bold;
+  font-size: 50px;
+  background-color: @tooltip_bg_color;
+}
+
+#message_note_script {
+  font-weight: normal;
+  font-size: 30px;
+  background-color: @tooltip_bg_color;
+}
+
+#message_note_suggestion {
+  font-weight: normal;
+  font-size: 25px;
+  background-color: @tooltip_bg_color;
+}
+
+
+
+
+/*
+fg_color
+bg_color
+base_color
+text_color
+selected_bg_color
+selected_fg_color
+tooltip_bg_color
+tooltip_fg_color
+
+*/
